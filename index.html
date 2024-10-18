@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Answer Evaluation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Answer Evaluation</h1>
+        <form id="evaluationForm" method="POST" action="/evaluate">
+            <label for="answer">Enter your answer:</label><br>
+            <textarea id="answer" name="answer" rows="10" cols="50"></textarea><br><br>
+            <button type="submit">Evaluate</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('evaluationForm');
+        form.onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/evaluate', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('result').innerHTML = `
+                <p>Accuracy: ${result.accuracy.toFixed(2)}%</p>
+                <p>Grammar Errors: ${result.grammar_errors}</p>
+                <p>Plagiarism Score: ${result.plagiarism_score.toFixed(2)}%</p>
+                <p>Final Score: ${result.final_score.toFixed(2)}%</p>
+            `;
+        };
+    </script>
+</body>
+</html>
